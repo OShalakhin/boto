@@ -20,7 +20,7 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
-from __future__ import with_statement
+
 import os
 
 import boto
@@ -58,7 +58,7 @@ def merge_endpoints(defaults, additions):
     # We can't just do an ``defaults.update(...)`` here, as that could
     # *overwrite* regions if present in both.
     # We'll iterate instead, essentially doing a deeper merge.
-    for service, region_info in additions.items():
+    for service, region_info in list(additions.items()):
         # Set the default, if not present, to an empty dict.
         defaults.setdefault(service, {})
         defaults[service].update(region_info)
@@ -135,7 +135,7 @@ def get_regions(service_name, region_cls=None, connection_cls=None):
 
     region_objs = []
 
-    for region_name, endpoint in endpoints.get(service_name, {}).items():
+    for region_name, endpoint in list(endpoints.get(service_name, {}).items()):
         region_objs.append(
             region_cls(
                 name=region_name,

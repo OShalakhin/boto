@@ -24,6 +24,7 @@ from boto.mws.connection import MWSConnection, api_call_map, destructure_object
 from boto.mws.response import ResponseElement
 
 from tests.unit import AWSMockServiceTestCase
+import collections
 
 
 class TestMWSConnection(AWSMockServiceTestCase):
@@ -77,7 +78,7 @@ doc/2009-01-01/">
         # It starts empty, but the decorators should add to it as they're
         # applied. As of 2013/10/21, there were 52 calls (with more likely
         # to be added), so let's simply ensure there are enough there.
-        self.assertTrue(len(api_call_map.keys()) > 50)
+        self.assertTrue(len(list(api_call_map.keys())) > 50)
 
     def test_method_for(self):
         # First, ensure that the map is in "right enough" state.
@@ -86,7 +87,7 @@ doc/2009-01-01/">
         # Make sure we can find the correct method.
         func = self.service_connection.method_for('GetFeedSubmissionList')
         # Ensure the right name was found.
-        self.assertTrue(callable(func))
+        self.assertTrue(isinstance(func, collections.Callable))
         ideal = self.service_connection.get_feed_submission_list
         self.assertEqual(func, ideal)
 

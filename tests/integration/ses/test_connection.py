@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 
 from tests.unit import unittest
 

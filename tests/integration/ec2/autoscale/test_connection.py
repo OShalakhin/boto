@@ -46,7 +46,7 @@ class AutoscaleConnectionTest(unittest.TestCase):
         # have any autoscale groups to introspect. It's useful, however, to
         # catch simple errors
 
-        print '--- running %s tests ---' % self.__class__.__name__
+        print('--- running %s tests ---' % self.__class__.__name__)
         c = AutoScaleConnection()
 
         self.assertTrue(repr(c).startswith('AutoScaleConnection'))
@@ -164,7 +164,7 @@ class AutoscaleConnectionTest(unittest.TestCase):
 
         assert not found
 
-        print '--- tests completed ---'
+        print('--- tests completed ---')
 
     def test_ebs_optimized_regression(self):
         c = AutoScaleConnection()

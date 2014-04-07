@@ -934,56 +934,56 @@ class ResultSetTestCase(unittest.TestCase):
 
     def test_iteration(self):
         # First page.
-        self.assertEqual(self.results.next(), 'Hello john #0')
-        self.assertEqual(self.results.next(), 'Hello john #1')
-        self.assertEqual(self.results.next(), 'Hello john #2')
-        self.assertEqual(self.results.next(), 'Hello john #3')
-        self.assertEqual(self.results.next(), 'Hello john #4')
+        self.assertEqual(next(self.results), 'Hello john #0')
+        self.assertEqual(next(self.results), 'Hello john #1')
+        self.assertEqual(next(self.results), 'Hello john #2')
+        self.assertEqual(next(self.results), 'Hello john #3')
+        self.assertEqual(next(self.results), 'Hello john #4')
         self.assertEqual(self.results._limit, 15)
         # Second page.
-        self.assertEqual(self.results.next(), 'Hello john #5')
-        self.assertEqual(self.results.next(), 'Hello john #6')
-        self.assertEqual(self.results.next(), 'Hello john #7')
-        self.assertEqual(self.results.next(), 'Hello john #8')
-        self.assertEqual(self.results.next(), 'Hello john #9')
+        self.assertEqual(next(self.results), 'Hello john #5')
+        self.assertEqual(next(self.results), 'Hello john #6')
+        self.assertEqual(next(self.results), 'Hello john #7')
+        self.assertEqual(next(self.results), 'Hello john #8')
+        self.assertEqual(next(self.results), 'Hello john #9')
         self.assertEqual(self.results._limit, 10)
         # Third page.
-        self.assertEqual(self.results.next(), 'Hello john #10')
-        self.assertEqual(self.results.next(), 'Hello john #11')
-        self.assertEqual(self.results.next(), 'Hello john #12')
-        self.assertRaises(StopIteration, self.results.next)
+        self.assertEqual(next(self.results), 'Hello john #10')
+        self.assertEqual(next(self.results), 'Hello john #11')
+        self.assertEqual(next(self.results), 'Hello john #12')
+        self.assertRaises(StopIteration, self.results.__next__)
         self.assertEqual(self.results._limit, 7)
 
     def test_limit_smaller_than_first_page(self):
         results = ResultSet()
         results.to_call(fake_results, 'john', greeting='Hello', limit=2)
-        self.assertEqual(results.next(), 'Hello john #0')
-        self.assertEqual(results.next(), 'Hello john #1')
-        self.assertRaises(StopIteration, results.next)
+        self.assertEqual(next(results), 'Hello john #0')
+        self.assertEqual(next(results), 'Hello john #1')
+        self.assertRaises(StopIteration, results.__next__)
 
     def test_limit_equals_page(self):
         results = ResultSet()
         results.to_call(fake_results, 'john', greeting='Hello', limit=5)
         # First page
-        self.assertEqual(results.next(), 'Hello john #0')
-        self.assertEqual(results.next(), 'Hello john #1')
-        self.assertEqual(results.next(), 'Hello john #2')
-        self.assertEqual(results.next(), 'Hello john #3')
-        self.assertEqual(results.next(), 'Hello john #4')
-        self.assertRaises(StopIteration, results.next)
+        self.assertEqual(next(results), 'Hello john #0')
+        self.assertEqual(next(results), 'Hello john #1')
+        self.assertEqual(next(results), 'Hello john #2')
+        self.assertEqual(next(results), 'Hello john #3')
+        self.assertEqual(next(results), 'Hello john #4')
+        self.assertRaises(StopIteration, results.__next__)
 
     def test_limit_greater_than_page(self):
         results = ResultSet()
         results.to_call(fake_results, 'john', greeting='Hello', limit=6)
         # First page
-        self.assertEqual(results.next(), 'Hello john #0')
-        self.assertEqual(results.next(), 'Hello john #1')
-        self.assertEqual(results.next(), 'Hello john #2')
-        self.assertEqual(results.next(), 'Hello john #3')
-        self.assertEqual(results.next(), 'Hello john #4')
+        self.assertEqual(next(results), 'Hello john #0')
+        self.assertEqual(next(results), 'Hello john #1')
+        self.assertEqual(next(results), 'Hello john #2')
+        self.assertEqual(next(results), 'Hello john #3')
+        self.assertEqual(next(results), 'Hello john #4')
         # Second page
-        self.assertEqual(results.next(), 'Hello john #5')
-        self.assertRaises(StopIteration, results.next)
+        self.assertEqual(next(results), 'Hello john #5')
+        self.assertRaises(StopIteration, results.__next__)
 
     def test_iteration_noresults(self):
         def none(limit=10):
@@ -993,7 +993,7 @@ class ResultSetTestCase(unittest.TestCase):
 
         results = ResultSet()
         results.to_call(none, limit=20)
-        self.assertRaises(StopIteration, results.next)
+        self.assertRaises(StopIteration, results.__next__)
 
     def test_iteration_sporadic_pages(self):
         # Some pages have no/incomplete results but have a ``LastEvaluatedKey``
@@ -1038,16 +1038,16 @@ class ResultSetTestCase(unittest.TestCase):
         results = ResultSet()
         results.to_call(sporadic(), limit=20)
         # First page
-        self.assertEqual(results.next(), 'Result #0')
-        self.assertEqual(results.next(), 'Result #1')
-        self.assertEqual(results.next(), 'Result #2')
-        self.assertEqual(results.next(), 'Result #3')
+        self.assertEqual(next(results), 'Result #0')
+        self.assertEqual(next(results), 'Result #1')
+        self.assertEqual(next(results), 'Result #2')
+        self.assertEqual(next(results), 'Result #3')
         # Second page (misses!)
         # Moves on to the third page
-        self.assertEqual(results.next(), 'Result #4')
-        self.assertEqual(results.next(), 'Result #5')
-        self.assertEqual(results.next(), 'Result #6')
-        self.assertRaises(StopIteration, results.next)
+        self.assertEqual(next(results), 'Result #4')
+        self.assertEqual(next(results), 'Result #5')
+        self.assertEqual(next(results), 'Result #6')
+        self.assertRaises(StopIteration, results.__next__)
 
     def test_list(self):
         self.assertEqual(list(self.results), [
@@ -1127,11 +1127,11 @@ class BatchGetResultSetTestCase(unittest.TestCase):
 
     def test_iteration(self):
         # First page.
-        self.assertEqual(self.results.next(), 'hello alice')
-        self.assertEqual(self.results.next(), 'hello bob')
-        self.assertEqual(self.results.next(), 'hello jane')
-        self.assertEqual(self.results.next(), 'hello johndoe')
-        self.assertRaises(StopIteration, self.results.next)
+        self.assertEqual(next(self.results), 'hello alice')
+        self.assertEqual(next(self.results), 'hello bob')
+        self.assertEqual(next(self.results), 'hello jane')
+        self.assertEqual(next(self.results), 'hello johndoe')
+        self.assertRaises(StopIteration, self.results.__next__)
 
 
 class TableTestCase(unittest.TestCase):
@@ -1898,7 +1898,7 @@ class TableTestCase(unittest.TestCase):
             try:
                 with self.users.batch_write() as batch:
                     raise Exception('OH NOES')
-            except Exception, e:
+            except Exception as e:
                 self.assertEqual(str(e), 'OH NOES')
 
         self.assertFalse(mock_batch.called)
@@ -2385,11 +2385,11 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_1) as mock_query:
-            res_1 = results.next()
+            res_1 = next(results)
             # Now it should be populated.
             self.assertEqual(len(results._results), 2)
             self.assertEqual(res_1['username'], 'johndoe')
-            res_2 = results.next()
+            res_2 = next(results)
             self.assertEqual(res_2['username'], 'jane')
 
         self.assertEqual(mock_query.call_count, 1)
@@ -2408,12 +2408,12 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_2) as mock_query_2:
-            res_3 = results.next()
+            res_3 = next(results)
             # New results should have been found.
             self.assertEqual(len(results._results), 1)
             self.assertEqual(res_3['username'], 'foodoe')
 
-            self.assertRaises(StopIteration, results.next)
+            self.assertRaises(StopIteration, results.__next__)
 
         self.assertEqual(mock_query_2.call_count, 1)
 
@@ -2440,12 +2440,12 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_1) as mock_query:
-            res_1 = results.next()
+            res_1 = next(results)
             # Now it should be populated.
             self.assertEqual(len(results._results), 2)
             self.assertEqual(res_1['username'], 'johndoe')
-            self.assertEqual(res_1.keys(), ['username'])
-            res_2 = results.next()
+            self.assertEqual(list(res_1.keys()), ['username'])
+            res_2 = next(results)
             self.assertEqual(res_2['username'], 'jane')
 
         self.assertEqual(mock_query.call_count, 1)
@@ -2476,11 +2476,11 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_1) as mock_scan:
-            res_1 = results.next()
+            res_1 = next(results)
             # Now it should be populated.
             self.assertEqual(len(results._results), 2)
             self.assertEqual(res_1['username'], 'johndoe')
-            res_2 = results.next()
+            res_2 = next(results)
             self.assertEqual(res_2['username'], 'jane')
 
         self.assertEqual(mock_scan.call_count, 1)
@@ -2499,12 +2499,12 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_2) as mock_scan_2:
-            res_3 = results.next()
+            res_3 = next(results)
             # New results should have been found.
             self.assertEqual(len(results._results), 1)
             self.assertEqual(res_3['username'], 'zoeydoe')
 
-            self.assertRaises(StopIteration, results.next)
+            self.assertRaises(StopIteration, results.__next__)
 
         self.assertEqual(mock_scan_2.call_count, 1)
 
@@ -2530,12 +2530,12 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_1) as mock_query:
-            res_1 = results.next()
+            res_1 = next(results)
             # Now it should be populated.
             self.assertEqual(len(results._results), 2)
             self.assertEqual(res_1['username'], 'johndoe')
-            self.assertEqual(res_1.keys(), ['username'])
-            res_2 = results.next()
+            self.assertEqual(list(res_1.keys()), ['username'])
+            res_2 = next(results)
             self.assertEqual(res_2['username'], 'jane')
 
         self.assertEqual(mock_query.call_count, 1)
@@ -2730,11 +2730,11 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_1) as mock_batch_get:
-            res_1 = results.next()
+            res_1 = next(results)
             # Now it should be populated.
             self.assertEqual(len(results._results), 2)
             self.assertEqual(res_1['username'], 'johndoe')
-            res_2 = results.next()
+            res_2 = next(results)
             self.assertEqual(res_2['username'], 'jane')
 
         self.assertEqual(mock_batch_get.call_count, 1)
@@ -2754,12 +2754,12 @@ class TableTestCase(unittest.TestCase):
                 results,
                 'the_callable',
                 return_value=items_2) as mock_batch_get_2:
-            res_3 = results.next()
+            res_3 = next(results)
             # New results should have been found.
             self.assertEqual(len(results._results), 1)
             self.assertEqual(res_3['username'], 'zoeydoe')
 
-            self.assertRaises(StopIteration, results.next)
+            self.assertRaises(StopIteration, results.__next__)
 
         self.assertEqual(mock_batch_get_2.call_count, 1)
         self.assertEqual(results._keys_left, [])

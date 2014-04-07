@@ -45,8 +45,8 @@ import boto.jsonresponse
 import boto.utils
 import xml.sax
 import xml.sax.saxutils
-import StringIO
-import urllib
+import io
+import urllib.request, urllib.parse, urllib.error
 import re
 import base64
 from collections import defaultdict
@@ -187,8 +187,8 @@ class Bucket(object):
         if version_id:
             query_args_l.append('versionId=%s' % version_id)
         if response_headers:
-            for rk, rv in response_headers.iteritems():
-                query_args_l.append('%s=%s' % (rk, urllib.quote(rv)))
+            for rk, rv in response_headers.items():
+                query_args_l.append('%s=%s' % (rk, urllib.parse.quote(rv)))
 
         key, resp = self._get_key_internal(key_name, headers, query_args_l)
         return key
@@ -374,16 +374,16 @@ class Bucket(object):
         if initial_query_string:
             pairs.append(initial_query_string)
 
-        for key, value in params.items():
+        for key, value in list(params.items()):
             key = key.replace('_', '-')
             if key == 'maxkeys':
                 key = 'max-keys'
-            if isinstance(value, unicode):
+            if isinstance(value, str):
                 value = value.encode('utf-8')
             if value is not None and value != '':
                 pairs.append('%s=%s' % (
-                    urllib.quote(key),
-                    urllib.quote(str(value)
+                    urllib.parse.quote(key),
+                    urllib.parse.quote(str(value)
                 )))
 
         return '&'.join(pairs)
@@ -663,17 +663,17 @@ class Bucket(object):
 
         def delete_keys2(hdrs):
             hdrs = hdrs or {}
-            data = u"""<?xml version="1.0" encoding="UTF-8"?>"""
-            data += u"<Delete>"
+            data = """<?xml version="1.0" encoding="UTF-8"?>"""
+            data += "<Delete>"
             if quiet:
-                data += u"<Quiet>true</Quiet>"
+                data += "<Quiet>true</Quiet>"
             count = 0
             while count < 1000:
                 try:
-                    key = ikeys.next()
+                    key = next(ikeys)
                 except StopIteration:
                     break
-                if isinstance(key, basestring):
+                if isinstance(key, str):
                     key_name = key
                     version_id = None
                 elif isinstance(key, tuple) and len(key) == 2:
@@ -693,15 +693,15 @@ class Bucket(object):
                     result.errors.append(error)
                     continue
                 count += 1
-                data += u"<Object><Key>%s</Key>" % xml.sax.saxutils.escape(key_name)
+                data += "<Object><Key>%s</Key>" % xml.sax.saxutils.escape(key_name)
                 if version_id:
-                    data += u"<VersionId>%s</VersionId>" % version_id
-                data += u"</Object>"
-            data += u"</Delete>"
+                    data += "<VersionId>%s</VersionId>" % version_id
+                data += "</Object>"
+            data += "</Delete>"
             if count <= 0:
                 return False  # no more
             data = data.encode('utf-8')
-            fp = StringIO.StringIO(data)
+            fp = io.StringIO(data)
             md5 = boto.utils.compute_md5(fp)
             hdrs['Content-MD5'] = md5[1]
             hdrs['Content-Type'] = 'text/xml'
@@ -851,7 +851,7 @@ class Bucket(object):
             acl = src_bucket.get_xml_acl(src_key_name)
         if encrypt_key:
             headers[provider.server_side_encryption_header] = 'AES256'
-        src = '%s/%s' % (src_bucket_name, urllib.quote(src_key_name))
+        src = '%s/%s' % (src_bucket_name, urllib.parse.quote(src_key_name))
         if src_version_id:
             src += '?versionId=%s' % src_version_id
         headers[provider.copy_source_header] = str(src)
@@ -1327,7 +1327,7 @@ class Bucket(object):
         """
         xml = lifecycle_config.to_xml()
         xml = xml.encode('utf-8')
-        fp = StringIO.StringIO(xml)
+        fp = io.StringIO(xml)
         md5 = boto.utils.compute_md5(fp)
         if headers is None:
             headers = {}
@@ -1591,7 +1591,7 @@ class Bucket(object):
             CORS configuration.  See the S3 documentation for details
             of the exact syntax required.
         """
-        fp = StringIO.StringIO(cors_xml)
+        fp = io.StringIO(cors_xml)
         md5 = boto.utils.compute_md5(fp)
         if headers is None:
             headers = {}
@@ -1818,7 +1818,7 @@ class Bucket(object):
     def set_xml_tags(self, tag_str, headers=None, query_args='tagging'):
         if headers is None:
             headers = {}
-        md5 = boto.utils.compute_md5(StringIO.StringIO(tag_str))
+        md5 = boto.utils.compute_md5(io.StringIO(tag_str))
         headers['Content-MD5'] = md5[1]
         headers['Content-Type'] = 'text/xml'
         response = self.connection.make_request('PUT', self.name,

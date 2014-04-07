@@ -19,10 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 #
-from __future__ import with_statement
+
 
 import os
-import urlparse
+import urllib.parse
 from tests.unit import unittest
 from httpretty import HTTPretty
 
@@ -216,7 +216,7 @@ class TestAWSQueryConnectionSimple(TestAWSQueryConnection):
                                  "/",
                                  "POST")
         del os.environ['no_proxy']
-        args = urlparse.parse_qs(HTTPretty.last_request.body)
+        args = urllib.parse.parse_qs(HTTPretty.last_request.body)
         self.assertEqual(args['AWSAccessKeyId'], ['access_key'])
 
     def test_query_connection_noproxy_nosecure(self):
@@ -238,7 +238,7 @@ class TestAWSQueryConnectionSimple(TestAWSQueryConnection):
                                  "/",
                                  "POST")
         del os.environ['no_proxy']
-        args = urlparse.parse_qs(HTTPretty.last_request.body)
+        args = urllib.parse.parse_qs(HTTPretty.last_request.body)
         self.assertEqual(args['AWSAccessKeyId'], ['access_key'])
 
     def test_single_command(self):
@@ -254,7 +254,7 @@ class TestAWSQueryConnectionSimple(TestAWSQueryConnection):
                                  "/",
                                  "POST")
 
-        args = urlparse.parse_qs(HTTPretty.last_request.body)
+        args = urllib.parse.parse_qs(HTTPretty.last_request.body)
         self.assertEqual(args['AWSAccessKeyId'], ['access_key'])
         self.assertEqual(args['SignatureMethod'], ['HmacSHA256'])
         self.assertEqual(args['Version'], [conn.APIVersion])
@@ -277,13 +277,13 @@ class TestAWSQueryConnectionSimple(TestAWSQueryConnection):
                                   {'par1': 'foo', 'par2': 'baz'},
                                   "/",
                                   "POST")
-        body1 = urlparse.parse_qs(HTTPretty.last_request.body)
+        body1 = urllib.parse.parse_qs(HTTPretty.last_request.body)
 
         resp2 = conn.make_request('myCmd2',
                                   {'par3': 'bar', 'par4': 'narf'},
                                   "/",
                                   "POST")
-        body2 = urlparse.parse_qs(HTTPretty.last_request.body)
+        body2 = urllib.parse.parse_qs(HTTPretty.last_request.body)
 
         self.assertEqual(body1['par1'], ['foo'])
         self.assertEqual(body1['par2'], ['baz'])

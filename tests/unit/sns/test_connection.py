@@ -28,8 +28,8 @@ from mock import Mock
 from boto.sns.connection import SNSConnection
 
 QUEUE_POLICY = {
-    u'Policy':
-        (u'{"Version":"2008-10-17","Id":"arn:aws:sqs:us-east-1:'
+    'Policy':
+        ('{"Version":"2008-10-17","Id":"arn:aws:sqs:us-east-1:'
          'idnum:testqueuepolicy/SQSDefaultPolicy","Statement":'
          '[{"Sid":"sidnum","Effect":"Allow","Principal":{"AWS":"*"},'
          '"Action":"SQS:GetQueueUrl","Resource":'
@@ -227,7 +227,7 @@ class TestSNSConnection(AWSMockServiceTestCase):
 
     def test_publish_with_utf8_message(self):
         self.set_http_response(status_code=200)
-        subject = message = u'We \u2665 utf-8'.encode('utf-8')
+        subject = message = 'We \u2665 utf-8'.encode('utf-8')
         self.service_connection.publish('topic', message, subject)
         self.assert_request_parameters({
             'Action': 'Publish',

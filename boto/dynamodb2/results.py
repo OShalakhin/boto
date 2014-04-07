@@ -1,3 +1,4 @@
+import collections
 class ResultSet(object):
     """
     A class used to lazily handle page-to-page navigation through a set of
@@ -52,7 +53,7 @@ class ResultSet(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         self._offset += 1
 
         if self._offset >= len(self._results):
@@ -96,7 +97,7 @@ class ResultSet(object):
             >>> rs.to_call(squares_to, y=3)
 
         """
-        if not callable(the_callable):
+        if not isinstance(the_callable, collections.Callable):
             raise ValueError(
                 'You must supply an object or function to be called.'
             )

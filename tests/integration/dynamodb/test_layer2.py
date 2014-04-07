@@ -61,7 +61,7 @@ class DynamoDBLayer2Test(unittest.TestCase):
         return result
 
     def test_layer2_basic(self):
-        print '--- running Amazon DynamoDB Layer2 tests ---'
+        print('--- running Amazon DynamoDB Layer2 tests ---')
         c = self.dynamodb
 
         # First create a schema for the table
@@ -148,7 +148,7 @@ class DynamoDBLayer2Test(unittest.TestCase):
         # make sure the put() succeeds
         try:
             item1.put()
-        except c.layer1.ResponseError, e:
+        except c.layer1.ResponseError as e:
             raise Exception("Item put failed: %s" % e)
 
         # Try to get an item that does not exist.
@@ -162,7 +162,7 @@ class DynamoDBLayer2Test(unittest.TestCase):
         assert item1_copy.range_key == item1.range_key
         for attr_name in item1_attrs:
             val = item1_copy[attr_name]
-            if isinstance(val, (int, long, float, basestring)):
+            if isinstance(val, (int, float, str)):
                 assert val == item1[attr_name]
 
         # Try retrieving only select attributes
@@ -189,7 +189,7 @@ class DynamoDBLayer2Test(unittest.TestCase):
         expected = {'FooBar': True}
         try:
             item1.delete(expected_value=expected)
-        except c.layer1.ResponseError, e:
+        except c.layer1.ResponseError as e:
             pass
 
         # Now update the existing object
@@ -410,7 +410,7 @@ class DynamoDBLayer2Test(unittest.TestCase):
 
         item3.delete()
         table2_item1.delete()
-        print '--- tests completed ---'
+        print('--- tests completed ---')
 
     def test_binary_attrs(self):
         c = self.dynamodb

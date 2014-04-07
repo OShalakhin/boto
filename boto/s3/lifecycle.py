@@ -48,7 +48,7 @@ class Rule(object):
         self.id = id
         self.prefix = '' if prefix is None else prefix
         self.status = status
-        if isinstance(expiration, (int, long)):
+        if isinstance(expiration, int):
             # retain backwards compatibility???
             self.expiration = Expiration(days=expiration)
         else:

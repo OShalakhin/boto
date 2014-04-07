@@ -117,7 +117,7 @@ class TestUnicodeCallingFormat(AWSMockServiceTestCase):
 </ListAllMyBucketsResult>"""
 
     def create_service_connection(self, **kwargs):
-        kwargs['calling_format'] = u'boto.s3.connection.OrdinaryCallingFormat'
+        kwargs['calling_format'] = 'boto.s3.connection.OrdinaryCallingFormat'
         return super(TestUnicodeCallingFormat,
                      self).create_service_connection(**kwargs)
 

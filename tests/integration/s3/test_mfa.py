@@ -49,8 +49,8 @@ class S3MFATest (unittest.TestCase):
 
     def test_mfadel(self):
         # Enable Versioning with MfaDelete
-        mfa_sn = raw_input('MFA S/N: ')
-        mfa_code = raw_input('MFA Code: ')
+        mfa_sn = input('MFA S/N: ')
+        mfa_code = input('MFA Code: ')
         self.bucket.configure_versioning(True, mfa_delete=True, mfa_token=(mfa_sn, mfa_code))
 
         # Check enabling mfa worked.
@@ -77,11 +77,11 @@ class S3MFATest (unittest.TestCase):
             pass
 
         # Now try delete again with the MFA token
-        mfa_code = raw_input('MFA Code: ')
+        mfa_code = input('MFA Code: ')
         self.bucket.delete_key('foobar', version_id=v1, mfa_token=(mfa_sn, mfa_code))
 
         # Next suspend versioning and disable MfaDelete on the bucket
-        mfa_code = raw_input('MFA Code: ')
+        mfa_code = input('MFA Code: ')
         self.bucket.configure_versioning(False, mfa_delete=False, mfa_token=(mfa_sn, mfa_code))
 
         # Lastly, check disabling mfa worked.

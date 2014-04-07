@@ -34,7 +34,7 @@ class SDBConnectionTest (unittest.TestCase):
     sdb = True
 
     def test_1_basic(self):
-        print '--- running SDBConnection tests ---'
+        print('--- running SDBConnection tests ---')
         c = SDBConnection()
         rs = c.get_all_domains()
         num_domains = len(rs)
@@ -62,7 +62,7 @@ class SDBConnectionTest (unittest.TestCase):
 
         # try to get the attributes and see if they match
         item = domain.get_attributes(item_1, consistent_read=True)
-        assert len(item.keys()) == len(attrs_1.keys())
+        assert len(list(item.keys())) == len(list(attrs_1.keys()))
         assert item['name1'] == attrs_1['name1']
         assert item['name2'] == attrs_1['name2']
 
@@ -115,5 +115,5 @@ class SDBConnectionTest (unittest.TestCase):
         stat = c.delete_domain(domain)
         assert stat
 
-        print '--- tests completed ---'
+        print('--- tests completed ---')
 

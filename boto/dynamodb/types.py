@@ -27,7 +27,7 @@ Python types and vice-versa.
 import base64
 from decimal import (Decimal, DecimalException, Context,
                      Clamped, Overflow, Inexact, Underflow, Rounded)
-from exceptions import DynamoDBNumberError
+from .exceptions import DynamoDBNumberError
 
 
 DYNAMODB_CONTEXT = Context(
@@ -51,13 +51,13 @@ def float_to_decimal(f):
 
 
 def is_num(n):
-    types = (int, long, float, bool, Decimal)
+    types = (int, int, float, bool, Decimal)
     return isinstance(n, types) or n in types
 
 
 def is_str(n):
-    return isinstance(n, basestring) or (isinstance(n, type) and
-                                         issubclass(n, basestring))
+    return isinstance(n, str) or (isinstance(n, type) and
+                                         issubclass(n, str))
 
 
 def is_binary(n):
@@ -97,11 +97,11 @@ def get_dynamodb_type(val):
     elif is_str(val):
         dynamodb_type = 'S'
     elif isinstance(val, (set, frozenset)):
-        if False not in map(is_num, val):
+        if False not in list(map(is_num, val)):
             dynamodb_type = 'NS'
-        elif False not in map(is_str, val):
+        elif False not in list(map(is_str, val)):
             dynamodb_type = 'SS'
-        elif False not in map(is_binary, val):
+        elif False not in list(map(is_binary, val)):
             dynamodb_type = 'BS'
     elif isinstance(val, Binary):
         dynamodb_type = 'B'
@@ -124,7 +124,7 @@ def dynamize_value(val):
     elif dynamodb_type == 'S':
         val = {dynamodb_type: val}
     elif dynamodb_type == 'NS':
-        val = {dynamodb_type: map(serialize_num, val)}
+        val = {dynamodb_type: list(map(serialize_num, val))}
     elif dynamodb_type == 'SS':
         val = {dynamodb_type: [n for n in val]}
     elif dynamodb_type == 'B':
@@ -136,7 +136,7 @@ def dynamize_value(val):
 
 class Binary(object):
     def __init__(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             raise TypeError('Value must be a string of binary data!')
 
         self.value = value
@@ -169,7 +169,7 @@ def item_object_hook(dct):
     This hook will transform Amazon DynamoDB JSON responses to something
     that maps directly to native Python types.
     """
-    if len(dct.keys()) > 1:
+    if len(list(dct.keys())) > 1:
         return dct
     if 'S' in dct:
         return dct['S']
@@ -244,23 +244,23 @@ class Dynamizer(object):
                 n = str(float_to_decimal(attr))
             else:
                 n = str(DYNAMODB_CONTEXT.create_decimal(attr))
-            if filter(lambda x: x in n, ('Infinity', 'NaN')):
+            if [x for x in ('Infinity', 'NaN') if x in n]:
                 raise TypeError('Infinity and NaN not supported')
             return n
-        except (TypeError, DecimalException), e:
+        except (TypeError, DecimalException) as e:
             msg = '{0} numeric for `{1}`\n{2}'.format(
                 e.__class__.__name__, attr, str(e) or '')
         raise DynamoDBNumberError(msg)
 
     def _encode_s(self, attr):
-        if isinstance(attr, unicode):
+        if isinstance(attr, str):
             attr = attr.encode('utf-8')
         elif not isinstance(attr, str):
             attr = str(attr)
         return attr
 
     def _encode_ns(self, attr):
-        return map(self._encode_n, attr)
+        return list(map(self._encode_n, attr))
 
     def _encode_ss(self, attr):
         return [self._encode_s(n) for n in attr]
@@ -279,7 +279,7 @@ class Dynamizer(object):
         """
         if len(attr) > 1 or not attr:
             return attr
-        dynamodb_type = attr.keys()[0]
+        dynamodb_type = list(attr.keys())[0]
         if dynamodb_type.lower() == dynamodb_type:
             # It's not an actual type, just a single character attr that
             # overlaps with the DDB types. Return it.

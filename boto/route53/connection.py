@@ -24,9 +24,9 @@
 # IN THE SOFTWARE.
 #
 
-import exception
+from . import exception
 import random
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import uuid
 import xml.sax
 
@@ -79,10 +79,10 @@ class Route53Connection(AWSAuthConnection):
     def make_request(self, action, path, headers=None, data='', params=None):
         if params:
             pairs = []
-            for key, val in params.iteritems():
+            for key, val in params.items():
                 if val is None:
                     continue
-                pairs.append(key + '=' + urllib.quote(str(val)))
+                pairs.append(key + '=' + urllib.parse.quote(str(val)))
             path += '?' + '&'.join(pairs)
         return super(Route53Connection, self).make_request(action, path,
                                               headers, data,

@@ -27,7 +27,7 @@ except ImportError:
 import hashlib
 import hmac
 import mock
-import thread
+import _thread
 import time
 
 import boto.utils
@@ -45,12 +45,12 @@ from boto.compat import json
 class TestThreadImport(unittest.TestCase):
     def test_strptime(self):
         def f():
-            for m in xrange(1, 13):
-                for d in xrange(1,29):
+            for m in range(1, 13):
+                for d in range(1,29):
                     boto.utils.parse_ts('2013-01-01T00:00:00Z')
 
-        for _ in xrange(10):
-            thread.start_new_thread(f, ())
+        for _ in range(10):
+            _thread.start_new_thread(f, ())
 
         time.sleep(3)
 
@@ -234,7 +234,7 @@ class TestLazyLoadMetadata(unittest.TestCase):
 
         self.set_normal_response([key_data, invalid_data, valid_data])
         response = LazyLoadMetadata(url, num_retries)
-        self.assertEqual(response.values()[0], json.loads(valid_data))
+        self.assertEqual(list(response.values())[0], json.loads(valid_data))
 
     def test_meta_data_with_invalid_json_format_happened_twice(self):
         key_data = "test"
@@ -246,7 +246,7 @@ class TestLazyLoadMetadata(unittest.TestCase):
         self.set_normal_response([key_data, invalid_data, invalid_data])
         response = LazyLoadMetadata(url, num_retries)
         with self.assertRaises(ValueError):
-            response.values()[0]
+            list(response.values())[0]
 
     def test_user_data(self):
         self.set_normal_response(['foo'])

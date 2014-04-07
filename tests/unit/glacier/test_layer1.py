@@ -12,15 +12,15 @@ class GlacierLayer1ConnectionBase(AWSMockServiceTestCase):
     def setUp(self):
         super(GlacierLayer1ConnectionBase, self).setUp()
         self.json_header = [('Content-Type', 'application/json')]
-        self.vault_name = u'examplevault'
+        self.vault_name = 'examplevault'
         self.vault_arn = 'arn:aws:glacier:us-east-1:012345678901:vaults/' + \
                           self.vault_name
-        self.vault_info = {u'CreationDate': u'2012-03-16T22:22:47.214Z',
-                           u'LastInventoryDate': u'2012-03-21T22:06:51.218Z',
-                           u'NumberOfArchives': 2,
-                           u'SizeInBytes': 12334,
-                           u'VaultARN': self.vault_arn,
-                           u'VaultName': self.vault_name}
+        self.vault_info = {'CreationDate': '2012-03-16T22:22:47.214Z',
+                           'LastInventoryDate': '2012-03-21T22:06:51.218Z',
+                           'NumberOfArchives': 2,
+                           'SizeInBytes': 12334,
+                           'VaultARN': self.vault_arn,
+                           'VaultName': self.vault_name}
 
 
 class GlacierVaultsOperations(GlacierLayer1ConnectionBase):
@@ -30,9 +30,9 @@ class GlacierVaultsOperations(GlacierLayer1ConnectionBase):
         self.service_connection.create_vault(self.vault_name)
 
     def test_list_vaults(self):
-        content = {u'Marker': None,
-                   u'RequestId': None,
-                   u'VaultList': [self.vault_info]}
+        content = {'Marker': None,
+                   'RequestId': None,
+                   'VaultList': [self.vault_info]}
         self.set_http_response(status_code=200, header=self.json_header,
                                body=json.dumps(content))
         api_response = self.service_connection.list_vaults()
@@ -40,7 +40,7 @@ class GlacierVaultsOperations(GlacierLayer1ConnectionBase):
 
     def test_describe_vaults(self):
         content = copy.copy(self.vault_info)
-        content[u'RequestId'] = None
+        content['RequestId'] = None
         self.set_http_response(status_code=200, header=self.json_header,
                                body=json.dumps(content))
         api_response = self.service_connection.describe_vault(self.vault_name)
@@ -58,13 +58,13 @@ class GlacierJobOperations(GlacierLayer1ConnectionBase):
         self.job_content = 'abc' * 1024
 
     def test_initiate_archive_job(self):
-        content = {u'Type': u'archive-retrieval',
-                   u'ArchiveId': u'AAABZpJrTyioDC_HsOmHae8EZp_uBSJr6cnGOLKp_XJCl-Q',
-                   u'Description': u'Test Archive',
-                   u'SNSTopic': u'Topic',
-                   u'JobId': None,
-                   u'Location': None,
-                   u'RequestId': None}
+        content = {'Type': 'archive-retrieval',
+                   'ArchiveId': 'AAABZpJrTyioDC_HsOmHae8EZp_uBSJr6cnGOLKp_XJCl-Q',
+                   'Description': 'Test Archive',
+                   'SNSTopic': 'Topic',
+                   'JobId': None,
+                   'Location': None,
+                   'RequestId': None}
         self.set_http_response(status_code=202, header=self.json_header,
                                body=json.dumps(content))
         api_response = self.service_connection.initiate_job(self.vault_name,

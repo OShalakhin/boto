@@ -19,9 +19,9 @@
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
-from __future__ import with_statement
+
 import mock
-import httplib
+import http.client
 
 from tests.unit import unittest
 from boto.sns import connect_to_region
@@ -53,7 +53,7 @@ class TestSNSConnection(unittest.TestCase):
         # On Python 2.5(.6), not having this in place would cause any SigV4
         # calls to fail, due to a signature mismatch (the port would be present
         # when it shouldn't be).
-        https = httplib.HTTPSConnection
+        https = http.client.HTTPSConnection
         mpo = mock.patch.object
 
         with mpo(https, 'request') as mock_request:

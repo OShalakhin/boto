@@ -9,13 +9,13 @@ from boto import provider
 
 INSTANCE_CONFIG = {
     'allowall': {
-        u'AccessKeyId': u'iam_access_key',
-        u'Code': u'Success',
-        u'Expiration': u'2012-09-01T03:57:34Z',
-        u'LastUpdated': u'2012-08-31T21:43:40Z',
-        u'SecretAccessKey': u'iam_secret_key',
-        u'Token': u'iam_token',
-        u'Type': u'AWS-HMAC'
+        'AccessKeyId': 'iam_access_key',
+        'Code': 'Success',
+        'Expiration': '2012-09-01T03:57:34Z',
+        'LastUpdated': '2012-08-31T21:43:40Z',
+        'SecretAccessKey': 'iam_secret_key',
+        'Token': 'iam_token',
+        'Type': 'AWS-HMAC'
     }
 }
 
@@ -209,13 +209,13 @@ class TestProvider(unittest.TestCase):
         first_expiration = (now + timedelta(seconds=10)).strftime(
             "%Y-%m-%dT%H:%M:%SZ")
         credentials = {
-            u'AccessKeyId': u'first_access_key',
-            u'Code': u'Success',
-            u'Expiration': first_expiration,
-            u'LastUpdated': u'2012-08-31T21:43:40Z',
-            u'SecretAccessKey': u'first_secret_key',
-            u'Token': u'first_token',
-            u'Type': u'AWS-HMAC'
+            'AccessKeyId': 'first_access_key',
+            'Code': 'Success',
+            'Expiration': first_expiration,
+            'LastUpdated': '2012-08-31T21:43:40Z',
+            'SecretAccessKey': 'first_secret_key',
+            'Token': 'first_token',
+            'Type': 'AWS-HMAC'
         }
         instance_config = {'allowall': credentials}
         self.get_instance_metadata.return_value = instance_config

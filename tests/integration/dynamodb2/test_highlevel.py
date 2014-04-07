@@ -23,7 +23,7 @@
 """
 Tests for DynamoDB v2 high-level abstractions.
 """
-from __future__ import with_statement
+
 
 import os
 import time
@@ -229,7 +229,7 @@ class DynamoDBv2Test(unittest.TestCase):
 
         for res in results:
             self.assertTrue(res['username'] in ['johndoe',])
-            self.assertEqual(res.keys(), ['username'])
+            self.assertEqual(list(res.keys()), ['username'])
 
         # Ensure that queries with attributes don't return the hash key.
         results = users.query_2(
@@ -240,7 +240,7 @@ class DynamoDBv2Test(unittest.TestCase):
 
         for res in results:
             self.assertTrue(res['first_name'] in ['John',])
-            self.assertEqual(res.keys(), ['first_name'])
+            self.assertEqual(list(res.keys()), ['first_name'])
 
         # Test the strongly consistent query.
         c_results = users.query_2(

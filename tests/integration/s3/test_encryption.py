@@ -54,7 +54,7 @@ class S3EncryptionTest (unittest.TestCase):
     s3 = True
 
     def test_1_versions(self):
-        print '--- running S3Encryption tests ---'
+        print('--- running S3Encryption tests ---')
         c = S3Connection()
         # create a new, empty bucket
         bucket_name = 'encryption-%d' % int(time.time())
@@ -112,4 +112,4 @@ class S3EncryptionTest (unittest.TestCase):
 
         # now delete bucket
         bucket.delete()
-        print '--- tests completed ---'
+        print('--- tests completed ---')

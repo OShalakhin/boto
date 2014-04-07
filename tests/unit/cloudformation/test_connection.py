@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import unittest
-import httplib
+import http.client
 from datetime import datetime
 try:
     import json
@@ -47,15 +47,15 @@ class CloudFormationConnectionBase(AWSMockServiceTestCase):
 
     def setUp(self):
         super(CloudFormationConnectionBase, self).setUp()
-        self.stack_id = u'arn:aws:cloudformation:us-east-1:18:stack/Name/id'
+        self.stack_id = 'arn:aws:cloudformation:us-east-1:18:stack/Name/id'
 
 
 class TestCloudFormationCreateStack(CloudFormationConnectionBase):
     def default_body(self):
         return json.dumps(
-            {u'CreateStackResponse':
-                 {u'CreateStackResult': {u'StackId': self.stack_id},
-                  u'ResponseMetadata': {u'RequestId': u'1'}}})
+            {'CreateStackResponse':
+                 {'CreateStackResult': {'StackId': self.stack_id},
+                  'ResponseMetadata': {'RequestId': '1'}}})
 
     def test_create_stack_has_correct_request_params(self):
         self.set_http_response(status_code=200)
@@ -123,7 +123,7 @@ class TestCloudFormationCreateStack(CloudFormationConnectionBase):
             api_response = self.service_connection.create_stack(
                 'stack_name', template_body=SAMPLE_TEMPLATE,
                 parameters=[('KeyName', 'myKeyName')])
-        except BotoServerError, e:
+        except BotoServerError as e:
             self.assertEqual('abc', e.request_id)
             self.assertEqual(1, e.error_code)
             self.assertEqual('Invalid arg.', e.message)
@@ -131,9 +131,9 @@ class TestCloudFormationCreateStack(CloudFormationConnectionBase):
 class TestCloudFormationUpdateStack(CloudFormationConnectionBase):
     def default_body(self):
         return json.dumps(
-            {u'UpdateStackResponse':
-                 {u'UpdateStackResult': {u'StackId': self.stack_id},
-                  u'ResponseMetadata': {u'RequestId': u'1'}}})
+            {'UpdateStackResponse':
+                 {'UpdateStackResult': {'StackId': self.stack_id},
+                  'ResponseMetadata': {'RequestId': '1'}}})
 
     def test_update_stack_all_args(self):
         self.set_http_response(status_code=200)
@@ -187,8 +187,8 @@ class TestCloudFormationUpdateStack(CloudFormationConnectionBase):
 class TestCloudFormationDeleteStack(CloudFormationConnectionBase):
     def default_body(self):
         return json.dumps(
-            {u'DeleteStackResponse':
-                 {u'ResponseMetadata': {u'RequestId': u'1'}}})
+            {'DeleteStackResponse':
+                 {'ResponseMetadata': {'RequestId': '1'}}})
 
     def test_delete_stack(self):
         self.set_http_response(status_code=200)

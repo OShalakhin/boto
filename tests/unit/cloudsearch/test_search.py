@@ -3,7 +3,7 @@
 from tests.unit import unittest
 from httpretty import HTTPretty
 
-import urlparse
+import urllib.parse
 import json
 import mock
 import requests
@@ -53,14 +53,14 @@ class CloudSearchSearchBaseTest(unittest.TestCase):
     def get_args(self, requestline):
         (_, request, _) = requestline.split(" ")
         (_, request) = request.split("?", 1)
-        args = urlparse.parse_qs(request)
+        args = urllib.parse.parse_qs(request)
         return args
 
     def setUp(self):
         HTTPretty.enable()
         body = self.response
 
-        if not isinstance(body, basestring):
+        if not isinstance(body, str):
             body = json.dumps(body)
 
         HTTPretty.register_uri(HTTPretty.GET, FULL_URL,
@@ -298,7 +298,7 @@ class CloudSearchSearchTest(CloudSearchSearchBaseTest):
 
         results = search.search(q='Test')
 
-        hits = map(lambda x: x['id'], results.docs)
+        hits = [x['id'] for x in results.docs]
 
         # This relies on the default response which is fed into HTTPretty
         self.assertEqual(
@@ -313,7 +313,7 @@ class CloudSearchSearchTest(CloudSearchSearchBaseTest):
         results_correct = iter(["12341", "12342", "12343", "12344",
                                 "12345", "12346", "12347"])
         for x in results:
-            self.assertEqual(x['id'], results_correct.next())
+            self.assertEqual(x['id'], next(results_correct))
 
 
     def test_cloudsearch_results_internal_consistancy(self):
@@ -364,7 +364,7 @@ class CloudSearchSearchFacetTest(CloudSearchSearchBaseTest):
         results = search.search(q='Test', facet=['tags'])
 
         self.assertTrue('tags' not in results.facets)
-        self.assertEqual(results.facets['animals'], {u'lions': u'1', u'fish': u'2'})
+        self.assertEqual(results.facets['animals'], {'lions': '1', 'fish': '2'})
 
 
 class CloudSearchNonJsonTest(CloudSearchSearchBaseTest):

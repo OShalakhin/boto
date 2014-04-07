@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import httplib
+import http.client
 
 from tests.unit import unittest
 from tests.unit import AWSMockServiceTestCase

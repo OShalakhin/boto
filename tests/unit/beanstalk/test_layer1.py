@@ -16,16 +16,16 @@ class TestListAvailableSolutionStacks(AWSMockServiceTestCase):
 
     def default_body(self):
         return json.dumps(
-            {u'ListAvailableSolutionStacksResponse':
-               {u'ListAvailableSolutionStacksResult':
-                  {u'SolutionStackDetails': [
-                      {u'PermittedFileTypes': [u'war', u'zip'],
-                       u'SolutionStackName': u'32bit Amazon Linux running Tomcat 7'},
-                      {u'PermittedFileTypes': [u'zip'],
-                       u'SolutionStackName': u'32bit Amazon Linux running PHP 5.3'}],
-                      u'SolutionStacks': [u'32bit Amazon Linux running Tomcat 7',
-                                          u'32bit Amazon Linux running PHP 5.3']},
-                u'ResponseMetadata': {u'RequestId': u'request_id'}}})
+            {'ListAvailableSolutionStacksResponse':
+               {'ListAvailableSolutionStacksResult':
+                  {'SolutionStackDetails': [
+                      {'PermittedFileTypes': ['war', 'zip'],
+                       'SolutionStackName': '32bit Amazon Linux running Tomcat 7'},
+                      {'PermittedFileTypes': ['zip'],
+                       'SolutionStackName': '32bit Amazon Linux running PHP 5.3'}],
+                      'SolutionStacks': ['32bit Amazon Linux running Tomcat 7',
+                                          '32bit Amazon Linux running PHP 5.3']},
+                'ResponseMetadata': {'RequestId': 'request_id'}}})
 
     def test_list_available_solution_stacks(self):
         self.set_http_response(status_code=200)
@@ -37,8 +37,8 @@ class TestListAvailableSolutionStacks(AWSMockServiceTestCase):
                                       ['ListAvailableSolutionStacksResult']\
                                       ['SolutionStacks']
         self.assertEqual(solution_stacks,
-                        [u'32bit Amazon Linux running Tomcat 7',
-                         u'32bit Amazon Linux running PHP 5.3'])
+                        ['32bit Amazon Linux running Tomcat 7',
+                         '32bit Amazon Linux running PHP 5.3'])
         # These are the parameters that are actually sent to the CloudFormation
         # service.
         self.assert_request_parameters({
@@ -54,15 +54,15 @@ class TestCreateApplicationVersion(AWSMockServiceTestCase):
     def default_body(self):
         return json.dumps({
             'CreateApplicationVersionResponse':
-              {u'CreateApplicationVersionResult':
-                 {u'ApplicationVersion':
-                    {u'ApplicationName': u'application1',
-                     u'DateCreated': 1343067094.342,
-                     u'DateUpdated': 1343067094.342,
-                     u'Description': None,
-                     u'SourceBundle': {u'S3Bucket': u'elasticbeanstalk-us-east-1',
-                     u'S3Key': u'resources/elasticbeanstalk-sampleapp.war'},
-                     u'VersionLabel': u'version1'}}}})
+              {'CreateApplicationVersionResult':
+                 {'ApplicationVersion':
+                    {'ApplicationName': 'application1',
+                     'DateCreated': 1343067094.342,
+                     'DateUpdated': 1343067094.342,
+                     'Description': None,
+                     'SourceBundle': {'S3Bucket': 'elasticbeanstalk-us-east-1',
+                     'S3Key': 'resources/elasticbeanstalk-sampleapp.war'},
+                     'VersionLabel': 'version1'}}}})
 
     def test_create_application_version(self):
         self.set_http_response(status_code=200)

@@ -23,7 +23,7 @@ import base64
 import binascii
 import os
 import re
-import StringIO
+import io
 from boto.exception import BotoClientError
 from boto.s3.key import Key as S3Key
 from boto.s3.keyfile import KeyFile
@@ -704,7 +704,7 @@ class Key(S3Key):
         self.md5 = None
         self.base64md5 = None
 
-        fp = StringIO.StringIO(get_utf8_value(s))
+        fp = io.StringIO(get_utf8_value(s))
         r = self.set_contents_from_file(fp, headers, replace, cb, num_cb,
                                         policy, md5,
                                         if_generation=if_generation)

@@ -102,7 +102,7 @@ class SQSAuthParams(AWSMockServiceTestCase):
         
         self.service_connection.get_queue('my_queue', '599169622985')
 
-        assert 'QueueOwnerAWSAccountId' in self.actual_request.params.keys()
+        assert 'QueueOwnerAWSAccountId' in list(self.actual_request.params.keys())
         self.assertEquals(self.actual_request.params['QueueOwnerAWSAccountId'], '599169622985')
         
 

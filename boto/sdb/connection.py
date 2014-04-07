@@ -174,14 +174,14 @@ class SDBConnection(AWSQueryConnection):
             params['Expected.1.Value'] = expected_value[1]
 
     def _build_batch_list(self, params, items, replace=False):
-        item_names = items.keys()
+        item_names = list(items.keys())
         i = 0
         for item_name in item_names:
             params['Item.%d.ItemName' % i] = item_name
             j = 0
             item = items[item_name]
             if item is not None:
-                attr_names = item.keys()
+                attr_names = list(item.keys())
                 for attr_name in attr_names:
                     value = item[attr_name]
                     if isinstance(value, list):
@@ -235,9 +235,9 @@ class SDBConnection(AWSQueryConnection):
             requests made on this specific connection instance. It is by
             no means an account-wide estimate.
         """
-        print 'Total Usage: %f compute seconds' % self.box_usage
+        print('Total Usage: %f compute seconds' % self.box_usage)
         cost = self.box_usage * 0.14
-        print 'Approximate Cost: $%f' % cost
+        print('Approximate Cost: $%f' % cost)
 
     def get_domain(self, domain_name, validate=True):
         """
@@ -614,6 +614,6 @@ class SDBConnection(AWSQueryConnection):
         try:
             return self.get_list('Select', params, [('Item', self.item_cls)],
                              parent=domain)
-        except SDBResponseError, e:
+        except SDBResponseError as e:
             e.body = "Query: %s\n%s" % (query, e.body)
             raise e

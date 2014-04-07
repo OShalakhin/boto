@@ -1,7 +1,7 @@
 
 from datetime import datetime
 from threading import Thread
-import Queue
+import queue
 
 from boto.utils import RequestHook
 
@@ -12,7 +12,7 @@ class RequestLogger(RequestHook):
     """
     def __init__(self, filename='/tmp/request_log.csv'):
         self.request_log_file = open(filename, 'w')
-        self.request_log_queue = Queue.Queue(100)
+        self.request_log_queue = queue.Queue(100)
         Thread(target=self._request_log_worker).start()
     
 
@@ -21,7 +21,7 @@ class RequestLogger(RequestHook):
         now = datetime.now()
         time = now.strftime('%Y-%m-%d %H:%M:%S')
         td = (now - request.start_time)
-        duration = (td.microseconds + long(td.seconds + td.days*24*3600) * 1e6) / 1e6
+        duration = (td.microseconds + int(td.seconds + td.days*24*3600) * 1e6) / 1e6
         
         # write output including timestamp, status code, response time, response size, request action
         self.request_log_queue.put("'%s', '%s', '%s', '%s', '%s'\n" % (time, response.status, duration, len, request.params['Action']))

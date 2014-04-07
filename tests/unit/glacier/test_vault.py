@@ -21,7 +21,7 @@
 # IN THE SOFTWARE.
 #
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 
 import mock
 from mock import ANY

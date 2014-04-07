@@ -146,7 +146,7 @@ class Sequence(object):
         self.item_type = type(fnc(None))
         self.timestamp = None
         # Allow us to pass in a full name to a function
-        if isinstance(fnc, basestring):
+        if isinstance(fnc, str):
             from boto.utils import find_class
             fnc = find_class(fnc)
         self.fnc = fnc
@@ -169,7 +169,7 @@ class Sequence(object):
         try:
             self.db.put_attributes(self.id, new_val, expected_value=expected_value)
             self.timestamp = new_val['timestamp']
-        except SDBResponseError, e:
+        except SDBResponseError as e:
             if e.status == 409:
                 raise ValueError("Sequence out of sync")
             else:
@@ -208,7 +208,7 @@ class Sequence(object):
                 self.domain_name = boto.config.get("DB", "sequence_db", boto.config.get("DB", "db_name", "default"))
             try:
                 self._db = sdb.get_domain(self.domain_name)
-            except SDBResponseError, e:
+            except SDBResponseError as e:
                 if e.status == 400:
                     self._db = sdb.create_domain(self.domain_name)
                 else:
@@ -217,7 +217,7 @@ class Sequence(object):
 
     db = property(_connect)
 
-    def next(self):
+    def __next__(self):
         self.val = self.fnc(self.val, self.last_value)
         return self.val
 

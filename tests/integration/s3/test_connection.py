@@ -27,9 +27,9 @@ Some unit tests for the S3Connection
 import unittest
 import time
 import os
-import urllib
-import urlparse
-import httplib
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
+import http.client
 from boto.s3.connection import S3Connection
 from boto.s3.bucket import Bucket
 from boto.exception import S3PermissionsError, S3ResponseError
@@ -39,7 +39,7 @@ class S3ConnectionTest (unittest.TestCase):
     s3 = True
 
     def test_1_basic(self):
-        print '--- running S3Connection tests ---'
+        print('--- running S3Connection tests ---')
         c = S3Connection()
         # create a new, empty bucket
         bucket_name = 'test-%d' % int(time.time())
@@ -66,27 +66,27 @@ class S3ConnectionTest (unittest.TestCase):
         fp.close()
         # test generated URLs
         url = k.generate_url(3600)
-        file = urllib.urlopen(url)
+        file = urllib.request.urlopen(url)
         assert s1 == file.read(), 'invalid URL %s' % url
         url = k.generate_url(3600, force_http=True)
-        file = urllib.urlopen(url)
+        file = urllib.request.urlopen(url)
         assert s1 == file.read(), 'invalid URL %s' % url
         url = k.generate_url(3600, force_http=True, headers={'x-amz-x-token' : 'XYZ'})
-        file = urllib.urlopen(url)
+        file = urllib.request.urlopen(url)
         assert s1 == file.read(), 'invalid URL %s' % url
         rh = {'response-content-disposition': 'attachment; filename="foo.txt"'}
         url = k.generate_url(60, response_headers=rh)
-        file = urllib.urlopen(url)
+        file = urllib.request.urlopen(url)
         assert s1 == file.read(), 'invalid URL %s' % url
         #test whether amperands and to-be-escaped characters work in header filename
         rh = {'response-content-disposition': 'attachment; filename="foo&z%20ar&ar&zar&bar.txt"'}
         url = k.generate_url(60, response_headers=rh, force_http=True)
-        file = urllib.urlopen(url)
+        file = urllib.request.urlopen(url)
         assert s1 == file.read(), 'invalid URL %s' % url
         # overwrite foobar contents with a PUT
         url = k.generate_url(3600, 'PUT', force_http=True, policy='private', reduced_redundancy=True)
-        up = urlparse.urlsplit(url)
-        con = httplib.HTTPConnection(up.hostname, up.port)
+        up = urllib.parse.urlsplit(url)
+        con = http.client.HTTPConnection(up.hostname, up.port)
         con.request("PUT", up.path + '?' + up.query, body="hello there")
         resp = con.getresponse()
         assert 200 == resp.status
@@ -137,7 +137,7 @@ class S3ConnectionTest (unittest.TestCase):
         mdval2 = 'This is the second metadata value'
         k.set_metadata(mdkey2, mdval2)
         # try a unicode metadata value
-        mdval3 = u'föö'
+        mdval3 = 'föö'
         mdkey3 = 'meta3'
         k.set_metadata(mdkey3, mdval3)
         k.set_contents_from_string(s1)
@@ -205,7 +205,7 @@ class S3ConnectionTest (unittest.TestCase):
         # now delete bucket
         time.sleep(5)
         c.delete_bucket(bucket)
-        print '--- tests completed ---'
+        print('--- tests completed ---')
 
     def test_basic_anon(self):
         auth_con = S3Connection()
@@ -217,7 +217,7 @@ class S3ConnectionTest (unittest.TestCase):
         anon_con = S3Connection(anon=True)
         anon_bucket = Bucket(anon_con, bucket_name)
         try:
-            iter(anon_bucket.list()).next()
+            next(iter(anon_bucket.list()))
             self.fail("anon bucket list should fail")
         except S3ResponseError:
             pass
@@ -226,9 +226,9 @@ class S3ConnectionTest (unittest.TestCase):
         auth_bucket.set_acl('public-read')
         time.sleep(5)
         try:
-            iter(anon_bucket.list()).next()
+            next(iter(anon_bucket.list()))
             self.fail("not expecting contents")
-        except S3ResponseError, e:
+        except S3ResponseError as e:
             self.fail("We should have public-read access, but received "
                       "an error: %s" % e)
         except StopIteration:
@@ -241,7 +241,7 @@ class S3ConnectionTest (unittest.TestCase):
         c = S3Connection()
         try:
             c.create_bucket('bad$bucket$name')
-        except S3ResponseError, e:
+        except S3ResponseError as e:
             self.assertEqual(e.error_code, 'InvalidBucketName')
         else:
             self.fail("S3ResponseError not raised.")

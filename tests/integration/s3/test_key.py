@@ -27,8 +27,8 @@ Some unit tests for S3 Key
 
 from tests.unit import unittest
 import time
-import StringIO
-import urllib
+import io
+import urllib.request, urllib.parse, urllib.error
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from boto.exception import S3ResponseError
@@ -50,7 +50,7 @@ class S3KeyTest(unittest.TestCase):
     def test_set_contents_from_file_dataloss(self):
         # Create an empty stringio and write to it.
         content = "abcde"
-        sfp = StringIO.StringIO()
+        sfp = io.StringIO()
         sfp.write(content)
         # Try set_contents_from_file() without rewinding sfp
         k = self.bucket.new_key("k")
@@ -68,7 +68,7 @@ class S3KeyTest(unittest.TestCase):
         self.assertEqual(ks, content)
 
         # finally, try with a 0 length string
-        sfp = StringIO.StringIO()
+        sfp = io.StringIO()
         k = self.bucket.new_key("k")
         k.set_contents_from_file(sfp)
         self.assertEqual(k.size, 0)
@@ -79,7 +79,7 @@ class S3KeyTest(unittest.TestCase):
 
     def test_set_contents_as_file(self):
         content="01234567890123456789"
-        sfp = StringIO.StringIO(content)
+        sfp = io.StringIO(content)
 
         # fp is set at 0 for just opened (for read) files.
         # set_contents should write full content to key.
@@ -113,7 +113,7 @@ class S3KeyTest(unittest.TestCase):
 
     def test_set_contents_with_md5(self):
         content="01234567890123456789"
-        sfp = StringIO.StringIO(content)
+        sfp = io.StringIO(content)
 
         # fp is set at 0 for just opened (for read) files.
         # set_contents should write full content to key.
@@ -148,7 +148,7 @@ class S3KeyTest(unittest.TestCase):
 
     def test_get_contents_with_md5(self):
         content="01234567890123456789"
-        sfp = StringIO.StringIO(content)
+        sfp = io.StringIO(content)
 
         k = self.bucket.new_key("k")
         k.set_contents_from_file(sfp)
@@ -168,7 +168,7 @@ class S3KeyTest(unittest.TestCase):
         self.my_cb_last = None
         k = self.bucket.new_key("k")
         k.BufferSize = 2
-        sfp = StringIO.StringIO("")
+        sfp = io.StringIO("")
         k.set_contents_from_file(sfp, cb=callback, num_cb=10)
         self.assertEqual(self.my_cb_cnt, 1)
         self.assertEqual(self.my_cb_last, 0)
@@ -182,7 +182,7 @@ class S3KeyTest(unittest.TestCase):
         self.assertEqual(self.my_cb_last, 0)
 
         content="01234567890123456789"
-        sfp = StringIO.StringIO(content)
+        sfp = io.StringIO(content)
 
         # expect 2 calls due start/finish
         self.my_cb_cnt = 0
@@ -383,7 +383,7 @@ class S3KeyTest(unittest.TestCase):
         key.set_contents_from_string('Some text here.')
 
         check = self.bucket.get_key('test_date')
-        self.assertEqual(check.get_metadata('date'), u'20130524T155935Z')
+        self.assertEqual(check.get_metadata('date'), '20130524T155935Z')
         self.assertTrue('x-amz-meta-date' in check._get_remote_metadata())
 
     def test_header_casing(self):
@@ -401,8 +401,8 @@ class S3KeyTest(unittest.TestCase):
         key = self.bucket.new_key('test_header_encoding')
 
         key.set_metadata('Cache-control', 'public, max-age=500')
-        key.set_metadata('Test-Plus', u'A plus (+)')
-        key.set_metadata('Content-disposition', u'filename=Schöne Zeit.txt')
+        key.set_metadata('Test-Plus', 'A plus (+)')
+        key.set_metadata('Content-disposition', 'filename=Schöne Zeit.txt')
         key.set_contents_from_string('foo')
 
         check = self.bucket.get_key('test_header_encoding')
@@ -411,6 +411,6 @@ class S3KeyTest(unittest.TestCase):
         self.assertEqual(check.get_metadata('test-plus'), 'A plus (+)')
         self.assertEqual(check.content_disposition, 'filename=Sch%C3%B6ne%20Zeit.txt')
         self.assertEqual(
-            urllib.unquote(check.content_disposition).decode('utf-8'),
+            urllib.parse.unquote(check.content_disposition).decode('utf-8'),
             'filename=Schöne Zeit.txt'.decode('utf-8')
         )

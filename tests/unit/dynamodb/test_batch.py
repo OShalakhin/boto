@@ -32,8 +32,8 @@ DESCRIBE_TABLE_1 = {
     'Table': {
         'CreationDateTime': 1349910554.478,
         'ItemCount': 1,
-        'KeySchema': {'HashKeyElement': {'AttributeName': u'foo',
-                                         'AttributeType': u'S'}},
+        'KeySchema': {'HashKeyElement': {'AttributeName': 'foo',
+                                         'AttributeType': 'S'}},
         'ProvisionedThroughput': {'ReadCapacityUnits': 10,
                                   'WriteCapacityUnits': 10},
         'TableName': 'testtable',
@@ -45,8 +45,8 @@ DESCRIBE_TABLE_2 = {
     'Table': {
         'CreationDateTime': 1349910554.478,
         'ItemCount': 1,
-        'KeySchema': {'HashKeyElement': {'AttributeName': u'baz',
-                                         'AttributeType': u'S'},
+        'KeySchema': {'HashKeyElement': {'AttributeName': 'baz',
+                                         'AttributeType': 'S'},
                       'RangeKeyElement': {'AttributeName': 'myrange',
                                           'AttributeType': 'N'}},
         'ProvisionedThroughput': {'ReadCapacityUnits': 10,

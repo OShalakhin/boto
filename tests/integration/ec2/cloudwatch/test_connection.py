@@ -268,10 +268,10 @@ class CloudWatchConnectionTest(unittest.TestCase):
         self.assertEquals(alarms.next_token, 'mynexttoken')
         self.assertEquals(alarms[0].name, 'FancyAlarm')
         self.assertEquals(alarms[0].comparison, '<')
-        self.assertEquals(alarms[0].dimensions, {u'Job': [u'ANiceCronJob']})
+        self.assertEquals(alarms[0].dimensions, {'Job': ['ANiceCronJob']})
         self.assertEquals(alarms[1].name, 'SuperFancyAlarm')
         self.assertEquals(alarms[1].comparison, '>')
-        self.assertEquals(alarms[1].dimensions, {u'Job': [u'ABadCronJob']})
+        self.assertEquals(alarms[1].dimensions, {'Job': ['ABadCronJob']})
 
 if __name__ == '__main__':
     unittest.main()

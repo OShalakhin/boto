@@ -148,7 +148,7 @@ class TestRDSConnection(AWSMockServiceTestCase):
         self.assertEqual(db.allocated_storage, 200)
         self.assertEqual(
             db.endpoint,
-            (u'mydbinstance2.c0hjqouvn9mf.us-west-2.rds.amazonaws.com', 3306))
+            ('mydbinstance2.c0hjqouvn9mf.us-west-2.rds.amazonaws.com', 3306))
         self.assertEqual(db.instance_class, 'db.m1.large')
         self.assertEqual(db.master_username, 'awsuser')
         self.assertEqual(db.availability_zone, 'us-west-2b')

@@ -143,7 +143,7 @@ class TestStackParse(unittest.TestCase):
         h = boto.handler.XmlHandler(rs, None)
         xml.sax.parseString(SAMPLE_XML, h)
         tags = rs[0].tags
-        self.assertEqual(tags, {u'key0': u'value0', u'key1': u'value1'})
+        self.assertEqual(tags, {'key0': 'value0', 'key1': 'value1'})
 
     def test_event_creation_time_with_millis(self):
         millis_xml = SAMPLE_XML.replace(

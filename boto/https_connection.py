@@ -19,14 +19,14 @@
 
 """Extensions to allow HTTPS requests with SSL certificate validation."""
 
-import httplib
+import http.client
 import re
 import socket
 import ssl
 
 import boto
 
-class InvalidCertificateException(httplib.HTTPException):
+class InvalidCertificateException(http.client.HTTPException):
   """Raised when a certificate is provided with an invalid hostname."""
 
   def __init__(self, host, cert, reason):
@@ -36,7 +36,7 @@ class InvalidCertificateException(httplib.HTTPException):
       host: The hostname the connection was made to.
       cert: The SSL certificate (as a dictionary) the host returned.
     """
-    httplib.HTTPException.__init__(self)
+    http.client.HTTPException.__init__(self)
     self.host = host
     self.cert = cert
     self.reason = reason
@@ -79,10 +79,10 @@ def ValidateCertificateHostname(cert, hostname):
   return False
 
 
-class CertValidatingHTTPSConnection(httplib.HTTPConnection):
+class CertValidatingHTTPSConnection(http.client.HTTPConnection):
   """An HTTPConnection that connects over SSL and validates certificates."""
 
-  default_port = httplib.HTTPS_PORT
+  default_port = http.client.HTTPS_PORT
 
   def __init__(self, host, port=default_port, key_file=None, cert_file=None,
                ca_certs=None, strict=None, **kwargs):
@@ -98,7 +98,7 @@ class CertValidatingHTTPSConnection(httplib.HTTPConnection):
       strict: When true, causes BadStatusLine to be raised if the status line
           can't be parsed as a valid HTTP/1.0 or 1.1 status line.
     """
-    httplib.HTTPConnection.__init__(self, host, port, strict, **kwargs)
+    http.client.HTTPConnection.__init__(self, host, port, strict, **kwargs)
     self.key_file = key_file
     self.cert_file = cert_file
     self.ca_certs = ca_certs

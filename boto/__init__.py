@@ -34,7 +34,7 @@ import re
 import sys
 import logging
 import logging.config
-import urlparse
+import urllib.parse
 from boto.exception import InvalidUriError
 
 __version__ = '2.27.0'
@@ -492,7 +492,7 @@ def connect_ec2_endpoint(url, aws_access_key_id=None,
     """
     from boto.ec2.regioninfo import RegionInfo
 
-    purl = urlparse.urlparse(url)
+    purl = urllib.parse.urlparse(url)
     kwargs['port'] = purl.port
     kwargs['host'] = purl.hostname
     kwargs['path'] = purl.path

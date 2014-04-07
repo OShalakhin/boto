@@ -83,7 +83,7 @@ class TestSigV4Handler(unittest.TestCase):
         auth = HmacAuthV4Handler('sns.us-east-1.amazonaws.com',
                                  Mock(), self.provider)
         params = {
-            'Message': u'We \u2665 utf-8'.encode('utf-8'),
+            'Message': 'We \u2665 utf-8'.encode('utf-8'),
         }
         request = HTTPRequest(
             'POST', 'https', 'sns.us-east-1.amazonaws.com', 443,

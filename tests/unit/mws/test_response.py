@@ -33,10 +33,10 @@ class TestMWSResponse(AWSMockServiceTestCase):
         obj = self.check_issue('Test9', Test9Result, text)
         Item = obj._result.Item
         useful = lambda x: not x[0].startswith('_')
-        nest = dict(filter(useful, Item.Nest.__dict__.items()))
+        nest = dict(list(filter(useful, list(Item.Nest.__dict__.items()))))
         self.assertEqual(nest, dict(Zip='Zap', Zam='Zoo'))
         useful = lambda x: not x[0].startswith('_') and not x[0] == 'Nest'
-        item = dict(filter(useful, Item.__dict__.items()))
+        item = dict(list(filter(useful, list(Item.__dict__.items()))))
         self.assertEqual(item, dict(Foo='Bar', Bif='Bam', Zoom=None))
 
     def test_parsing_member_list_specification(self):
@@ -62,11 +62,11 @@ class TestMWSResponse(AWSMockServiceTestCase):
                   </Test8Result></Test8Response>"""
         obj = self.check_issue('Test8', Test8Result, text)
         self.assertSequenceEqual(
-            map(int, obj._result.Item),
-            range(4),
+            list(map(int, obj._result.Item)),
+            list(range(4)),
         )
         self.assertSequenceEqual(
-            map(lambda x: map(int, x.Foo), obj._result.Extra),
+            [list(map(int, x.Foo)) for x in obj._result.Extra],
             [[4, 5], [], [6, 7]],
         )
 
@@ -120,14 +120,14 @@ class TestMWSResponse(AWSMockServiceTestCase):
         obj = self.check_issue('Test7', Test7Result, text)
         item = obj._result.Item
         self.assertEqual(len(item), 3)
-        nests = [z.Nest for z in filter(lambda x: x.Nest, item)]
+        nests = [z.Nest for z in [x for x in item if x.Nest]]
         self.assertSequenceEqual(
             [[y.Data for y in nest] for nest in nests],
-            [[u'2', u'4', u'6'], [u'1', u'3', u'5']],
+            [['2', '4', '6'], ['1', '3', '5']],
         )
         self.assertSequenceEqual(
             [element.Simple for element in item[1].List],
-            [[u'4', u'5', u'6'], [u'7', u'8', u'9']],
+            [['4', '5', '6'], ['7', '8', '9']],
         )
         self.assertSequenceEqual(
             item[-1].List[0].Simple,
@@ -193,7 +193,7 @@ class TestMWSResponse(AWSMockServiceTestCase):
         obj = self.check_issue('Test1', Test1Result, text)
         self.assertTrue(len(obj._result.Item) == 3)
         elements = lambda x: getattr(x, 'Foo', getattr(x, 'Zip', '?'))
-        elements = map(elements, obj._result.Item)
+        elements = list(map(elements, obj._result.Item))
         self.assertSequenceEqual(elements, ['Bar', 'Bif', 'Baz'])
 
     def test_parsing_missing_lists(self):
